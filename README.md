@@ -94,6 +94,18 @@ or from clone:
 ./scripts/uninstall.sh
 ```
 
+## how it differs from Claude Code's Warp plugin
+
+this hook was inspired by [warpdotdev/claude-code-warp](https://github.com/warpdotdev/claude-code-warp), but Codex and Claude Code deliver hook payloads differently:
+
+| | Claude Code | Codex CLI |
+|---|---|---|
+| payload delivery | **stdin** (JSON) | **argv[1]** (JSON string) |
+| payload shape | `.transcript_path` -> JSONL file | `.input-messages[]`, `.last-assistant-message` inline |
+| stdout safety | OK | **never write to stdout** (corrupts TUI) |
+| config | plugin system | top-level `notify` in config.toml |
+| TTY access | `/dev/tty` direct | `/dev/tty` direct (the `tty` command fails in child processes) |
+
 ## limitations
 
 - Codex `notify` is post-turn; this does not provide real-time approval-prompt events.

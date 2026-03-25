@@ -69,7 +69,19 @@ if [ "$WRITE_CONFIG" -eq 1 ]; then
       echo "notify key already exists; not modifying (use --force-write to replace)."
     fi
   else
-    printf '\n%s\n' "$desired_line" >> "$CONFIG_FILE"
-    echo "Appended notify line."
+    # IMPORTANT: notify MUST be a top-level key, not inside any [section].
+    # Codex silently ignores it if nested. Prepend before first section header.
+    awk -v line="$desired_line" '
+      BEGIN { inserted=0 }
+      /^\[/ && !inserted {
+        print line
+        print ""
+        inserted=1
+      }
+      { print }
+      END { if (!inserted) print line }
+    ' "$CONFIG_FILE" > "$CONFIG_FILE.tmp"
+    mv "$CONFIG_FILE.tmp" "$CONFIG_FILE"
+    echo "Inserted notify line at top level (before first [section])."
   fi
 fi

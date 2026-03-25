@@ -9,14 +9,14 @@ PAYLOAD_RESPONSE_ONLY='{"type":"agent-turn-complete","input-messages":[],"last-a
 PAYLOAD_OTHER='{"type":"other-event","message":"hello"}'
 
 echo "== full payload =="
-TERM_PROGRAM=WarpTerminal WARP_NOTIFY_DRY_RUN=1 "$SCRIPT" "$PAYLOAD_FULL"
+TERM_PROGRAM=WarpTerminal WARP_NOTIFY_DRY_RUN=1 "$SCRIPT" "$PAYLOAD_FULL" 2>&1
 
 echo "== response only =="
-TERM_PROGRAM=WarpTerminal WARP_NOTIFY_DRY_RUN=1 "$SCRIPT" "$PAYLOAD_RESPONSE_ONLY"
+TERM_PROGRAM=WarpTerminal WARP_NOTIFY_DRY_RUN=1 "$SCRIPT" "$PAYLOAD_RESPONSE_ONLY" 2>&1
 
 echo "== other event fallback =="
-TERM_PROGRAM=WarpTerminal WARP_NOTIFY_DRY_RUN=1 "$SCRIPT" "$PAYLOAD_OTHER"
+TERM_PROGRAM=WarpTerminal WARP_NOTIFY_DRY_RUN=1 "$SCRIPT" "$PAYLOAD_OTHER" 2>&1
 
 echo "== non-warp should noop =="
-TERM_PROGRAM=iTerm2 WARP_NOTIFY_DRY_RUN=1 "$SCRIPT" "$PAYLOAD_FULL"
+TERM_PROGRAM=iTerm2 WARP_NOTIFY_DRY_RUN=1 "$SCRIPT" "$PAYLOAD_FULL" 2>&1
 echo "All tests passed"

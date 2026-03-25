@@ -28,17 +28,17 @@ send_warp_notification() {
   local body="$2"
 
   if [ "${WARP_NOTIFY_DRY_RUN:-0}" = "1" ]; then
-    printf 'DRY_RUN title=%s\n' "$title"
-    printf 'DRY_RUN body=%s\n' "$body"
+    # Write to stderr — stdout corrupts Codex TUI
+    printf 'DRY_RUN title=%s\n' "$title" >&2
+    printf 'DRY_RUN body=%s\n' "$body" >&2
     return 0
   fi
 
-  local tty_path
-  tty_path="$(tty 2>/dev/null || true)"
-  if [ -n "$tty_path" ] && [ "$tty_path" != "not a tty" ]; then
-    # OSC 777: \033]777;notify;<title>;<body>\007
-    printf '\033]777;notify;%s;%s\007' "$title" "$body" > "$tty_path" 2>/dev/null || true
-  fi
+  # Write directly to /dev/tty — the `tty` command fails in Codex's
+  # fire-and-forget child processes (stdin not connected), but /dev/tty
+  # always refers to the controlling terminal.
+  # OSC 777: \033]777;notify;<title>;<body>\007
+  printf '\033]777;notify;%s;%s\007' "$title" "$body" > /dev/tty 2>/dev/null || true
 }
 
 build_message_from_payload() {
